@@ -18,7 +18,19 @@ const PersonModal = Mongoose.model("Person",
 {
     firstName:String,
     lastName:String,
-    phoneNumber:String,
+    phoneNumber:{
+        type:String,
+        unique:true,
+        validate:
+        {
+            validator : (phoneNumber) =>
+            {
+                let numRegex = /^[0-5]{4}-[0-9]{7}$/;
+                return (numRegex.test(phoneNumber));
+            },
+            message : 'Provided phone number is invalid'
+        }
+                },
     cnicNumber:{
         type : String,
         required:true,
@@ -63,12 +75,13 @@ app.post('/person', async (req,res,next)=>{
             else
             {
             console.log(error);
-            res.send(error["errors"].cnicNumber["message"]);
+          //  res.send(error);
+           res.send(error["errors"]);
             }
         });
         
    
-    }
+    } 
     catch(error)
     {
         res.status(500).send(error);
